@@ -17,7 +17,7 @@ module vote_pkg::verified_addresses {
             admin: tx_context::sender(ctx),
             addrs: vector::empty<address>(),
         };
-        transfer::share_object(obj);
+        transfer::public_trandfer(obj, tx_context::sender(ctx));
         debug::print(&b"VerifiedAddrs created");
     }
 
@@ -25,6 +25,7 @@ module vote_pkg::verified_addresses {
     public entry fun add_address(v: &mut VerifiedAddrs, a: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == v.admin, 1);
         vector::push_back(&mut v.addrs, a);
+        transfer::public_transfer(v, v.admin);
         debug::print(&b"Address added");
     }
 
