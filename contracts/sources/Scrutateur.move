@@ -2,6 +2,7 @@
 module vote_pkg::scrutateur {
     use sui::object::{Self as object, UID};
     use std::debug;
+    use std::string;
     use sui::tx_context::{Self as tx_context, TxContext};
     use sui::transfer;
     use std::vector;
@@ -22,7 +23,7 @@ module vote_pkg::scrutateur {
             processed: vector::empty<bool>(),
         };
         transfer::public_transfer(s, tx_context::sender(ctx));
-        debug::print(&b"ScrutateurStore created");
+        debug::print(&string::utf8(b"ScrutateurStore created"));
     }
 
     /// Reçoit un token (appelé par le worker/off-chain après déchiffrement par le croupier)
@@ -31,7 +32,7 @@ module vote_pkg::scrutateur {
         assert!(tx_context::sender(ctx) == s.admin, 1);
         vector::push_back(&mut s.blobs, blob);
         vector::push_back(&mut s.processed, false);
-        debug::print(&b"Blob received by scrutateur");
+        debug::print(&string::utf8(b"Blob received by scrutateur"));
     }
 
     /// Marquer un blob comme traité (admin only)
@@ -39,7 +40,7 @@ module vote_pkg::scrutateur {
         assert!(tx_context::sender(ctx) == s.admin, 2);
         let mut flag_ref = vector::borrow_mut(&mut s.processed, index);
         *flag_ref = true;
-        debug::print(&b"Blob marked processed");
+        debug::print(&string::utf8(b"Blob marked processed"));
     }
 
     /// remove / delete scrutateur store (admin only)
@@ -138,4 +139,33 @@ module vote_pkg::scrutateur {
         let s = ScrutateurStore { id: object::new(&mut ctx), admin: other, blobs: vector::empty<vector<u8>>(), processed: vector::empty<bool>() };
         delete_all(s, &mut ctx); // should abort with code 3
     }
+
+
+#[test_only]
+public fun new_for_test(admin: address, ctx: &mut TxContext): ScrutateurStore {
+    // Construis l'objet minimalement valide pour tes tests.
+    // Exemple schématique :
+    ScrutateurStore {
+        id: object::new(ctx),
+        admin,
+        blobs: vector::empty<vector<u8>>(), // ← corrige ici
+        processed: vector::empty<bool>(),// adapte les types réels
+    }
+}
+
+#[test_only]
+public fun blobs_len(s: &ScrutateurStore): u64 {
+    vector::length(&s.blobs)
+}
+
+#[test_only]
+public fun processed_len(s: &ScrutateurStore): u64 {
+    vector::length(&s.processed)
+}
+
+#[test_only]
+public fun processed_get(s: &ScrutateurStore, i: u64): bool {
+    *vector::borrow(&s.processed, i)
+}
+
 }

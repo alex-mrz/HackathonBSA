@@ -2,6 +2,7 @@
 module vote_pkg::croupier {
     use std::debug;
     use sui::object::{Self, UID};
+    use std::string;
 
     use vote_pkg::verified_addresses;
 
@@ -24,7 +25,8 @@ module vote_pkg::croupier {
             forwarded: false,
         };
         transfer::public_transfer(s, tx_context::sender(ctx));
-        debug::print(&b"CroupierStore created");
+        debug::print(&string::utf8(b"CroupierStore created"));
+
     }
 
     /// Soumission d'un token chiffré par un citoyen
@@ -48,7 +50,8 @@ module vote_pkg::croupier {
         // enregistre token et submitter
         vector::push_back(&mut s.tokens, token);
         vector::push_back(&mut s.submitters, sender);
-        debug::print(&b"Token submitted to croupier");
+        debug::print(&string::utf8(b"Token submitted to croupier"));
+
     }
 
     /// TESTER LES FONCTION SWAP ET SHUFFLE
@@ -70,7 +73,7 @@ module vote_pkg::croupier {
         let _ = scrutateur_addr; // conserve le paramètre pour usage futur/off-chain
         // marquer forwarded pour éviter double forwarding
         s.forwarded = true;
-        debug::print(&b"Tokens forwarded (admin should call external worker to actually send)");
+        debug::print(&string::utf8(b"Tokens forwarded (admin should call external worker to actually send"));
         // NOTE: pour la démo on suppose un worker off-chain lit les tokens (en lecture) en appelant sui client object
         // et appelle scrutateur.receive_token pour chacun. Cette fonction on-chain ne fait pas directement l'envoi
         // automatique (car l'envoi/verif off-chain est attendu).

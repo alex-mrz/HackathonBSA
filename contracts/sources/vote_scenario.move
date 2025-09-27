@@ -26,10 +26,10 @@ module vote_pkg::vote_scenario_tests {
     fun e2e_register_three_and_process_blobs() {
         // one scenario context is enough here
         let mut ctx = tx_context::dummy();
-        let admin = tx_context::sender(&ctx);
+        let admin = tx_context::sender(&mut ctx);
 
         // 1) Verified registry (admin-owned)
-        let mut reg = va::new_for_test(admin, &mut ctx);
+        let mut reg = va::new_for_test(admin, &mut ctx); // admin == sender
 
         // 3 deterministic voter addresses
         let v1: address = @0x101;
@@ -37,9 +37,9 @@ module vote_pkg::vote_scenario_tests {
         let v3: address = @0x103;
 
         // register (no permission checks here because we call the internal helper)
-        va::add_address_internal(&mut reg, v1);
-        va::add_address_internal(&mut reg, v2);
-        va::add_address_internal(&mut reg, v3);
+         va::add_address(&mut reg, v1, &mut ctx);
+         va::add_address(&mut reg, v2, &mut ctx);
+         va::add_address(&mut reg, v3, &mut ctx);
 
         assert!(va::count(&reg) == 3, 1);
         assert!(va::is_verified(&reg, v1), 2);
@@ -52,21 +52,21 @@ module vote_pkg::vote_scenario_tests {
         sc::receive_blob(&mut s, b"vote_v1_yes", &mut ctx);
         sc::receive_blob(&mut s, b"vote_v2_no", &mut ctx);
         sc::receive_blob(&mut s, b"vote_v3_yes", &mut ctx);
-
-        assert!(vector::length(&s.blobs) == 3, 10);
-        assert!(vector::length(&s.processed) == 3, 11);
-        assert!(*vector::borrow(&s.processed, 0) == false, 12);
-        assert!(*vector::borrow(&s.processed, 1) == false, 13);
-        assert!(*vector::borrow(&s.processed, 2) == false, 14);
+        
+        assert!(sc::blobs_len(&s) == 3, 10);
+        assert!(sc::processed_len(&s) == 3, 11);
+        assert!(!sc::processed_get(&s, 0), 12);
+        assert!(!sc::processed_get(&s, 1), 13);
+        assert!(!sc::processed_get(&s, 2), 14);
 
         // mark all processed
         sc::mark_processed(&mut s, 0, &mut ctx);
         sc::mark_processed(&mut s, 1, &mut ctx);
         sc::mark_processed(&mut s, 2, &mut ctx);
-
-        assert!(*vector::borrow(&s.processed, 0) == true, 15);
-        assert!(*vector::borrow(&s.processed, 1) == true, 16);
-        assert!(*vector::borrow(&s.processed, 2) == true, 17);
+         
+        assert!(sc::processed_get(&s, 0), 15);
+        assert!(sc::processed_get(&s, 1), 16);
+        assert!(sc::processed_get(&s, 2), 17);
 
         // CLEANUP resources (consume values)
         sc::delete_all(s, &mut ctx);

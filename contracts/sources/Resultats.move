@@ -1,6 +1,7 @@
 // sources/vote_receiver.move
 module vote_pkg::vote_receiver {
     use sui::object::{Self, UID};
+    use std::string;    
     use std::debug;
 
     /// Objet qui stocke le tally (comptage) pour la démo
@@ -23,7 +24,8 @@ module vote_pkg::vote_receiver {
             total: 0,
         };
         transfer::public_transfer(t, tx_context::sender(ctx));
-        debug::print(&b"VoteTally created");
+        debug::print(&string::utf8(b"VoteTally created"));
+
     }
 
     /// Réception d'un choix (appelé par scrutateur/off-chain worker)
@@ -37,7 +39,7 @@ module vote_pkg::vote_receiver {
             v.no = v.no + 1;
         };
         v.total = v.total + 1;
-        debug::print(&b"Choice recorded");
+        debug::print(&string::utf8(b"Choice recorded"));
     }
 
     /// Lecture du décompte (public)
@@ -84,7 +86,8 @@ module vote_pkg::results_publisher {
             note,
         };
         transfer::public_transfer(r, tx_context::sender(ctx));
-        debug::print(&b"Result published");
+        let msg: std::string::String = std::string::utf8(b"Result published");
+        debug::print(&msg);
     }
 
     /// Supprime le résultat (publisher only)
@@ -92,6 +95,7 @@ module vote_pkg::results_publisher {
         assert!(tx_context::sender(ctx) == r.publisher, 1);
         let PublishedResult { id, publisher: _, yes: _, no: _, total: _, note: _ } = r;
         object::delete(id);
-        debug::print(&b"PublishedResult deleted");
+        let msg: std::string::String = std::string::utf8(b"PublishedResult deleted");
+        debug::print(&msg);
     }
 }

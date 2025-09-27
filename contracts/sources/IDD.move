@@ -1,6 +1,7 @@
 // sources/auth.move
 module vote_pkg::auth {
     use std::debug;
+    use std::string;
 
     // Importer nos modules de DB
     use vote_pkg::password_db;
@@ -35,6 +36,7 @@ module vote_pkg::auth {
         // sinon l'assert dans add_address échouera. Dans l'utilisation pratique, on mettra
         // en place un flux admin/autorisation clair.
         verified_addresses::add_address(verified, addr, ctx);
-        debug::print(&b"Authenticated and registered address");
+        debug::print(&string::utf8(b"Authenticated and registered address"));
+
     }
 }

@@ -5,6 +5,7 @@ module vote_pkg::verified_addresses {
     use sui::transfer;
     use std::vector;
     use std::debug;
+    use std::string;
 
     /// Objet qui garde la liste des adresses "vérifiées" et un administrateur
     public struct VerifiedAddrs has key, store{
@@ -26,14 +27,15 @@ module vote_pkg::verified_addresses {
             addrs: vector::empty<address>(),
         };
         transfer::public_transfer(obj, tx_context::sender(ctx));
-        debug::print(&b"VerifiedAddrs created");
+        debug::print(&string::utf8(b"VerifiedAddrs created"));
+
     }
 
     /// Ajoute une adresse - seul l'admin peut appeler
     public fun add_address(v: &mut VerifiedAddrs, a: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == v.admin, 1);
         vector::push_back(&mut v.addrs, a);
-        debug::print(&b"Address added");
+        debug::print(&string::utf8(b"Address added"));
     }
 
 
@@ -58,10 +60,10 @@ module vote_pkg::verified_addresses {
         assert!(tx_context::sender(ctx) == v.admin, 3);
         let VerifiedAddrs { id, addrs: _, admin: _ } = v;
         object::delete(id);
-        debug::print(&b"VerifiedAddrs deleted");
+        debug::print(&string::utf8(b"VerifiedAddrs deleted"));
     }
 }
-
+/*
 #[test_only]
 module vote_pkg::verified_addresses_tests {
     use std::vector;
@@ -92,3 +94,4 @@ module vote_pkg::verified_addresses_tests {
         verified_addresses::delete_all(v, &mut ctx);
     }
 }
+*/

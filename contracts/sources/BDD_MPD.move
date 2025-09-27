@@ -2,6 +2,7 @@
 module vote_pkg::password_db {
     use sui::object::{Self, UID};
     use std::debug;
+    use std::string;
 
     /// Stocke des hash de mots de passe (vector<u8> par hash)
     /// NOTE: pour la démo nous stockons des hash (SHA256) ; NE PAS stocker
@@ -20,14 +21,16 @@ module vote_pkg::password_db {
             hashes: vector::empty<vector<u8>>(),
         };
         transfer::public_transfer(db, tx_context::sender(ctx));
-        debug::print(&b"PasswordDB created");
+        debug::print(&string::utf8(b"PasswordDB created"));
+
     }
 
     /// Ajoute un hash (seul emitter peut ajouter)
     public fun add_password_hash(db: &mut PasswordDB, h: vector<u8>, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == db.emitter, 1);
         vector::push_back(&mut db.hashes, h);
-        debug::print(&b"Password hash added");
+        debug::print(&string::utf8(b"Password hash added"));
+
     }
 
    /// Vérifie si un hash existe
@@ -65,7 +68,7 @@ module vote_pkg::password_db {
         assert!(tx_context::sender(ctx) == db.emitter, 2);
         let PasswordDB { id, emitter: _, hashes: _ } = db;
         object::delete(id);
-        debug::print(&b"PasswordDB deleted");
+        debug::print(&string::utf8(b"PasswordDB deleted"));
     }
 
     public fun get_emitter(db: &PasswordDB): address {
