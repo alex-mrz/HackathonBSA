@@ -4,7 +4,7 @@ module vote_pkg::vote_receiver {
     use std::debug;
 
     /// Objet qui stocke le tally (comptage) pour la démo
-    struct VoteTally has key {
+    public struct VoteTally has key, store {
         id: UID,
         admin: address,
         yes: u64,
@@ -14,7 +14,7 @@ module vote_pkg::vote_receiver {
     }
 
     /// Crée la structure initiale (admin = creator)
-    public entry fun create_tally(ctx: &mut TxContext) {
+    public fun create_tally(ctx: &mut TxContext) {
         let t = VoteTally {
             id: object::new(ctx),
             admin: tx_context::sender(ctx),
@@ -28,14 +28,14 @@ module vote_pkg::vote_receiver {
 
     /// Réception d'un choix (appelé par scrutateur/off-chain worker)
     /// choice: 1 => yes, 2 => no
-    public entry fun receive_choice(v: &mut VoteTally, choice: u8, ctx: &mut TxContext) {
+    public fun receive_choice(v: &mut VoteTally, choice: u8, ctx: &mut TxContext) {
         // Only admin/scrutateur should be allowed to call this in the demo
         assert!(tx_context::sender(ctx) == v.admin, 1);
         if (choice == 1) {
             v.yes = v.yes + 1;
         } else {
             v.no = v.no + 1;
-        }
+        };
         v.total = v.total + 1;
         debug::print(&b"Choice recorded");
     }
@@ -46,9 +46,9 @@ module vote_pkg::vote_receiver {
     }
 
     /// Supprime le tally (admin only)
-    public entry fun delete_all(v: VoteTally, ctx: &mut TxContext) {
+    public fun delete_all(v: VoteTally, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == v.admin, 2);
-        let VoteTally { id, yes: _, no: _, total: _ } = v;
+        let VoteTally { id, admin: _, yes: _, no: _, total: _ } = v;
         object::delete(id);
     }
 }
@@ -64,7 +64,7 @@ module vote_pkg::results_publisher {
     use std::debug;
 
     /// Stocker le résultat publié (final)
-    struct PublishedResult has key {
+    public struct PublishedResult has key, store {
         id: UID,
         publisher: address,
         yes: u64,
@@ -74,7 +74,7 @@ module vote_pkg::results_publisher {
     }
 
     /// Publier le résultat final (seul le scrutateur/admin peut appeler)
-    public entry fun publish_result(yes: u64, no: u64, total: u64, note: vector<u8>, ctx: &mut TxContext) {
+    public fun publish_result(yes: u64, no: u64, total: u64, note: vector<u8>, ctx: &mut TxContext) {
         let r = PublishedResult {
             id: object::new(ctx),
             publisher: tx_context::sender(ctx),
@@ -88,9 +88,9 @@ module vote_pkg::results_publisher {
     }
 
     /// Supprime le résultat (publisher only)
-    public entry fun delete_result(r: PublishedResult, ctx: &mut TxContext) {
+    public fun delete_result(r: PublishedResult, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == r.publisher, 1);
-        let PublishedResult { id, yes: _, no: _, total: _, note: _ } = r;
+        let PublishedResult { id, publisher: _, yes: _, no: _, total: _, note: _ } = r;
         object::delete(id);
         debug::print(&b"PublishedResult deleted");
     }
