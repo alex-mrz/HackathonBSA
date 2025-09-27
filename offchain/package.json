@@ -1,0 +1,14 @@
+{
+  "name": "offchain",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "run": "node --loader ts-node/esm src/index.ts"
+  },
+  "dependencies": {
+    "@mysten/sui.js": "^0.54.1",
+    "blakejs": "^1.2.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
