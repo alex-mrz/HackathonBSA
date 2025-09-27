@@ -52,13 +52,6 @@ module vote_pkg::croupier {
     }
 
     /// TESTER LES FONCTION SWAP ET SHUFFLE
-    // fun swap<T>(v: &mut vector<T>, i: u64, j: u64) {
-    //     let tmp = vector::borrow_mut(v, i);
-    //     let tmp2 = vector::borrow_mut(v, j);
-    //     let t = *tmp;
-    //     *tmp = *tmp2;
-    //     *tmp2 = t;
-    // }
 
     fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
         let n = vector::length(&store.tokens);
