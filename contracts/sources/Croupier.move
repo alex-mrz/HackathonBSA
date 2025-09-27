@@ -51,7 +51,26 @@ module vote_pkg::croupier {
         debug::print(&b"Token submitted to croupier");
     }
 
-    /// Forward tokens vers le scrutateur (admin uniquement). Option: shuffle off-chain.
+    /// TESTER LES FONCTION SWAP ET SHUFFLE
+    fun swap<T>(v: &mut vector<T>, i: u64, j: u64) {
+        let tmp = vector::borrow_mut(v, i);
+        let tmp2 = vector::borrow_mut(v, j);
+        let t = *tmp;
+        *tmp = *tmp2;
+        *tmp2 = t;
+    }
+
+    fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
+        let n = vector::length(&store.tokens);
+        let mut i = 0;
+        while (i < n) {
+            let j = indices[i]; // indices must be provided externally, a quick python script random and connected
+            swap(&mut store.tokens, i, j);
+            swap(&mut store.submitters, i, j);
+            i = i + 1;
+        }
+    }
+
     /// Pour la démo, on envoie les blobs tels quels au scrutateur via un appel on-chain.
     public fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 3);
