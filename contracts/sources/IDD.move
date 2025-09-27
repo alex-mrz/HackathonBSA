@@ -4,7 +4,8 @@ module vote_pkg::auth {
 
     // Importer nos modules de DB
     use vote_pkg::password_db;
-    use vote_pkg::verified_addresses;
+    use vote_pkg::verified_addresses::{Self as verified_addresses, VerifiedAddrs};
+    
 
     /// Authenticate : l'entité appelante (ex: "émetteur d'identité") fournit
     /// l'adresse du citoyen (addr) et le hash du mot de passe (pw_hash).
@@ -17,7 +18,7 @@ module vote_pkg::auth {
     /// plus avancée, on utiliserait des signatures multi-parties ou un rôle.
     public fun authenticate_and_register(
         pw_db: &mut password_db::PasswordDB,
-        verified: &mut verified_addresses::VerifiedAddrs,
+        mut verified: VerifiedAddrs,
         addr: address,
         pw_hash: vector<u8>,
         ctx: &mut TxContext
@@ -33,7 +34,9 @@ module vote_pkg::auth {
         // Ici, pour la démo, on exige que le même émetteur soit aussi admin de VerifiedAddrs,
         // sinon l'assert dans add_address échouera. Dans l'utilisation pratique, on mettra
         // en place un flux admin/autorisation clair.
-        verified_addresses::add_address(verified, addr, ctx);
+        
+        verified_addresses::add_address(verified, addr, ctx); 
+    
         debug::print(&b"Authenticated and registered address");
     }
 }

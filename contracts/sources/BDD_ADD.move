@@ -4,14 +4,14 @@ module vote_pkg::verified_addresses {
     use std::debug;
 
     /// Objet qui garde la liste des adresses "vérifiées" et un administrateur
-    public struct VerifiedAddrs has key, store {
+    public struct VerifiedAddrs has key, store{
         id: UID,
         admin: address,
         addrs: vector<address>,
     }
 
     /// Crée l'objet VerifiedAddrs et le transfère à l'appelant (devient admin)
-    public fun create_admin(ctx: &mut TxContext) {
+    public entry fun create_admin(ctx: &mut TxContext) {
         let obj = VerifiedAddrs {
             id: object::new(ctx),
             admin: tx_context::sender(ctx),
@@ -25,7 +25,8 @@ module vote_pkg::verified_addresses {
     public fun add_address(mut v: VerifiedAddrs, a: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == v.admin, 1);
         vector::push_back(&mut v.addrs, a);
-        transfer::public_transfer(v, v.admin);
+        let admin = v.admin;
+        transfer::public_transfer(v, admin);
         debug::print(&b"Address added");
     }
 
