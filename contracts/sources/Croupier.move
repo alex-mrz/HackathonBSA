@@ -1,12 +1,12 @@
 // sources/croupier.move
 module vote_pkg::croupier {
-    use sui::object::{Self, UID};
     use std::debug;
+    use sui::object::{Self, UID};
 
     use vote_pkg::verified_addresses;
 
     /// Stocke blobs chiffrés (soumissions) et la liste des submitters.
-    public struct CroupierStore has key {
+    public struct CroupierStore has key, store {
         id: UID,
         admin: address,
         tokens: vector<vector<u8>>,    // blobs chiffrés tels qu'envoyés par les citoyens
@@ -39,9 +39,11 @@ module vote_pkg::croupier {
         let n = vector::length(&s.submitters);
         let mut i = 0;
         while (i < n) {
-            if (vector::borrow(&s.submitters, i) == &sender) { assert!(false, 2); }
+            if (*vector::borrow(&s.submitters, i) == sender) {
+                assert!(false, 2);
+            };
             i = i + 1;
-        }
+        };
 
         // enregistre token et submitter
         vector::push_back(&mut s.tokens, token);
@@ -53,6 +55,7 @@ module vote_pkg::croupier {
     /// Pour la démo, on envoie les blobs tels quels au scrutateur via un appel on-chain.
     public fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 3);
+        let _ = scrutateur_addr; // conserve le paramètre pour usage futur/off-chain
         // marquer forwarded pour éviter double forwarding
         s.forwarded = true;
         debug::print(&b"Tokens forwarded (admin should call external worker to actually send)");
@@ -64,7 +67,7 @@ module vote_pkg::croupier {
     /// Supprime tout (consomme l'objet) - admin only
     public fun delete_all(s: CroupierStore, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 4);
-        let CroupierStore { id, tokens: _, submitters: _, forwarded: _ } = s;
+        let CroupierStore { id, admin: _, tokens: _, submitters: _, forwarded: _ } = s;
         object::delete(id);
     }
 }
