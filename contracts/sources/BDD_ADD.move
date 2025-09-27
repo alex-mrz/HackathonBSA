@@ -7,7 +7,7 @@ module vote_pkg::verified_addresses {
     use std::debug;
 
     /// Objet qui garde la liste des adresses "vérifiées" et un administrateur
-    struct VerifiedAddrs has key {
+    struct VerifiedAddrs has key, store {
         id: UID,
         admin: address,
         addrs: vector<address>,
@@ -20,7 +20,7 @@ module vote_pkg::verified_addresses {
             admin: tx_context::sender(ctx),
             addrs: vector::empty<address>(),
         };
-        transfer::public_transfer(obj, tx_context::sender(ctx));
+        transfer::share_object(obj);
         debug::print(&b"VerifiedAddrs created");
     }
 
