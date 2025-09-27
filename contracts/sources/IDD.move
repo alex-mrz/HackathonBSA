@@ -23,7 +23,7 @@ module vote_pkg::auth {
         ctx: &mut TxContext
     ) {
         // L'appelant doit être bien l'émetteur qui a le droit d'ajouter des hashes
-        assert!(tx_context::sender(ctx) == pw_db.emitter, 1);
+        assert!(tx_context::sender(ctx) == password_db::get_emitter(pw_db), 1);
 
         // Vérifier que le hash existe dans la DB
         let exists = password_db::password_hash_exists(pw_db, &pw_hash);

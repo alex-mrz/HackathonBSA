@@ -67,4 +67,8 @@ module vote_pkg::password_db {
         object::delete(id);
         debug::print(&b"PasswordDB deleted");
     }
+
+    public fun get_emitter(db: &PasswordDB): address {
+        db.emitter
+    }
 }
