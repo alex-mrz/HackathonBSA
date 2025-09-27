@@ -1,6 +1,7 @@
 #[test_only]
 module vote_pkg::password_db_tests {
     use std::debug;
+    use std::string;
     use vote_pkg::password_db;
 
     /// Helper that creates a deterministic `TxContext` for tests.
@@ -20,23 +21,23 @@ module vote_pkg::password_db_tests {
         let sender = @0xA;
         let mut ctx = new_ctx(sender, 1);
         let before = sui::tx_context::get_ids_created(&ctx);
-        debug::print(&b"create_db: before increment");
+        debug::print(&string::utf8(b"create_db: before increment"));
         password_db::create_db(&mut ctx);
         let after = sui::tx_context::get_ids_created(&ctx);
         assert!(after == before + 1, 0);
-        debug::print(&b"create_db: after increment");
+        debug::print(&string::utf8(b"create_db: after increment"));
     }
 
     #[test]
     fun add_password_hash_stores_value() {
         let sender = @0xB;
         let (mut db, mut ctx) = new_db(sender, 2);
-        debug::print(&b"add_password_hash: inserting hash-1");
+        debug::print(&string::utf8(b"add_password_hash: inserting hash-1"));
         password_db::add_password_hash(&mut db, b"hash-1", &mut ctx);
         let query = b"hash-1";
-        debug::print(&b"add_password_hash: verifying presence");
+        debug::print(&string::utf8(b"add_password_hash: verifying presence"));
         assert!(password_db::password_hash_exists(&db, &query), 0);
-        debug::print(&b"add_password_hash: cleaning up");
+        debug::print(&string::utf8(b"add_password_hash: cleaning up"));
         password_db::delete_all(db, &mut ctx);
     }
 
@@ -44,12 +45,12 @@ module vote_pkg::password_db_tests {
     fun password_hash_exists_returns_false_for_missing_hash() {
         let sender = @0xC;
         let (mut db, mut ctx) = new_db(sender, 3);
-        debug::print(&b"password_hash_exists: inserting known hash");
+        debug::print(&string::utf8(b"password_hash_exists: inserting known hash"));
         password_db::add_password_hash(&mut db, b"known", &mut ctx);
         let missing = b"unknown";
-        debug::print(&b"password_hash_exists: lookup for missing hash");
+        debug::print(&string::utf8(b"password_hash_exists: lookup for missing hash"));
         assert!(!password_db::password_hash_exists(&db, &missing), 0);
-        debug::print(&b"password_hash_exists: cleaning up");
+        debug::print(&string::utf8(b"password_hash_exists: cleaning up"));
         password_db::delete_all(db, &mut ctx);
     }
 
@@ -58,7 +59,7 @@ module vote_pkg::password_db_tests {
         let sender = @0xD;
         let (mut db, mut owner_ctx) = new_db(sender, 4);
         let mut attacker_ctx = new_ctx(@0xE, 5);
-        debug::print(&b"add_password_hash: attacker attempting insert");
+        debug::print(&string::utf8(b"add_password_hash: attacker attempting insert"));
         password_db::add_password_hash(&mut db, b"forbidden", &mut attacker_ctx);
         password_db::delete_all(db, &mut owner_ctx);
     }
@@ -67,7 +68,7 @@ module vote_pkg::password_db_tests {
     fun delete_all_succeeds_for_emitter() {
         let sender = @0xF;
         let (db, mut ctx) = new_db(sender, 6);
-        debug::print(&b"delete_all: emitter deleting");
+        debug::print(&string::utf8(b"delete_all: emitter deleting"));
         password_db::delete_all(db, &mut ctx);
     }
 
@@ -76,7 +77,7 @@ module vote_pkg::password_db_tests {
         let sender = @0x10;
         let (db, _) = new_db(sender, 7);
         let mut attacker_ctx = new_ctx(@0x11, 8);
-        debug::print(&b"delete_all: attacker attempting delete");
+        debug::print(&string::utf8(b"delete_all: attacker attempting delete"));
         password_db::delete_all(db, &mut attacker_ctx);
     }
 
@@ -84,9 +85,9 @@ module vote_pkg::password_db_tests {
     fun get_emitter_returns_configured_address() {
         let sender = @0x12;
         let (db, mut ctx) = new_db(sender, 9);
-        debug::print(&b"get_emitter: verifying address");
+        debug::print(&string::utf8(b"get_emitter: verifying address"));
         assert!(password_db::get_emitter(&db) == sender, 0);
-        debug::print(&b"get_emitter: cleaning up");
+        debug::print(&string::utf8(b"get_emitter: cleaning up"));
         password_db::delete_all(db, &mut ctx);
     }
 }
