@@ -18,7 +18,7 @@ module vote_pkg::auth {
     /// plus avancée, on utiliserait des signatures multi-parties ou un rôle.
     public fun authenticate_and_register(
         pw_db: &mut password_db::PasswordDB,
-        mut verified: VerifiedAddrs,
+        verified: &mut VerifiedAddrs,
         addr: address,
         pw_hash: vector<u8>,
         ctx: &mut TxContext
@@ -34,9 +34,7 @@ module vote_pkg::auth {
         // Ici, pour la démo, on exige que le même émetteur soit aussi admin de VerifiedAddrs,
         // sinon l'assert dans add_address échouera. Dans l'utilisation pratique, on mettra
         // en place un flux admin/autorisation clair.
-        
-        verified_addresses::add_address(verified, addr, ctx); 
-    
+        verified_addresses::add_address(verified, addr, ctx);
         debug::print(&b"Authenticated and registered address");
     }
 }

@@ -22,11 +22,9 @@ module vote_pkg::verified_addresses {
     }
 
     /// Ajoute une adresse - seul l'admin peut appeler
-    public fun add_address(mut v: VerifiedAddrs, a: address, ctx: &mut TxContext) {
+    public fun add_address(v: &mut VerifiedAddrs, a: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == v.admin, 1);
         vector::push_back(&mut v.addrs, a);
-        let admin = v.admin;
-        transfer::public_transfer(v, admin);
         debug::print(&b"Address added");
     }
 

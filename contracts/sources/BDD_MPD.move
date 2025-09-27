@@ -71,4 +71,13 @@ module vote_pkg::password_db {
     public fun get_emitter(db: &PasswordDB): address {
         db.emitter
     }
+
+    #[test_only]
+    public fun new_for_testing(emitter: address, ctx: &mut TxContext): PasswordDB {
+        PasswordDB {
+            id: object::new(ctx),
+            emitter,
+            hashes: vector::empty<vector<u8>>(),
+        }
+    }
 }
