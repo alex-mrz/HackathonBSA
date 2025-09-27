@@ -6,7 +6,7 @@ module vote_pkg::croupier {
     use vote_pkg::verified_addresses;
 
     /// Stocke blobs chiffrés (soumissions) et la liste des submitters.
-    struct CroupierStore has key {
+    public struct CroupierStore has key {
         id: UID,
         admin: address,
         tokens: vector<vector<u8>>,    // blobs chiffrés tels qu'envoyés par les citoyens
@@ -15,7 +15,7 @@ module vote_pkg::croupier {
     }
 
     /// Crée la structure Croupier et l'assigne à l'admin
-    public entry fun create_store(ctx: &mut TxContext) {
+    public fun create_store(ctx: &mut TxContext) {
         let s = CroupierStore {
             id: object::new(ctx),
             admin: tx_context::sender(ctx),
@@ -29,7 +29,7 @@ module vote_pkg::croupier {
 
     /// Soumission d'un token chiffré par un citoyen
     /// - v_ref : référence à VerifiedAddrs pour vérifier l'éligibilité
-    public entry fun submit_token(s: &mut CroupierStore, v_ref: &verified_addresses::VerifiedAddrs, token: vector<u8>, ctx: &mut TxContext) {
+    public fun submit_token(s: &mut CroupierStore, v_ref: &verified_addresses::VerifiedAddrs, token: vector<u8>, ctx: &mut TxContext) {
         // vérifie que sender est dans la liste verified
         let sender = tx_context::sender(ctx);
         let ok = verified_addresses::is_verified(v_ref, sender);
@@ -51,7 +51,7 @@ module vote_pkg::croupier {
 
     /// Forward tokens vers le scrutateur (admin uniquement). Option: shuffle off-chain.
     /// Pour la démo, on envoie les blobs tels quels au scrutateur via un appel on-chain.
-    public entry fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
+    public fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 3);
         // marquer forwarded pour éviter double forwarding
         s.forwarded = true;
@@ -62,7 +62,7 @@ module vote_pkg::croupier {
     }
 
     /// Supprime tout (consomme l'objet) - admin only
-    public entry fun delete_all(s: CroupierStore, ctx: &mut TxContext) {
+    public fun delete_all(s: CroupierStore, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 4);
         let CroupierStore { id, tokens: _, submitters: _, forwarded: _ } = s;
         object::delete(id);
