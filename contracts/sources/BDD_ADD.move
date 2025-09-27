@@ -1,6 +1,9 @@
 // sources/verified_addresses.move
 module vote_pkg::verified_addresses {
-    use sui::object::{Self, UID};
+    use sui::object::{Self as object, UID};
+    use sui::tx_context::{Self as tx_context, TxContext};
+    use sui::transfer;
+    use std::vector;
     use std::debug;
 
     /// Objet qui garde la liste des adresses "vérifiées" et un administrateur
@@ -8,6 +11,11 @@ module vote_pkg::verified_addresses {
         id: UID,
         admin: address,
         addrs: vector<address>,
+    }
+
+    #[test_only]
+    public fun new_for_test(admin: address, ctx: &mut TxContext): VerifiedAddrs {
+        VerifiedAddrs { id: object::new(ctx), admin, addrs: vector::empty<address>() }
     }
 
     /// Crée l'objet VerifiedAddrs et le transfère à l'appelant (devient admin)
@@ -51,5 +59,36 @@ module vote_pkg::verified_addresses {
         let VerifiedAddrs { id, addrs: _, admin: _ } = v;
         object::delete(id);
         debug::print(&b"VerifiedAddrs deleted");
+    }
+}
+
+#[test_only]
+module vote_pkg::verified_addresses_tests {
+    use std::vector;
+    use sui::tx_context::{Self as tx_context, TxContext};
+    use sui::object::{Self as object, UID};
+
+    use vote_pkg::verified_addresses::{Self as verified_addresses, VerifiedAddrs};
+
+    // Happy path: create a registry owned by `admin`, add an address, verify, count, delete.
+    #[test]
+    fun test_create_add_and_verify() {
+        // Create a dummy TxContext for testing
+        let mut ctx = tx_context::dummy();
+        let admin = tx_context::sender(&mut ctx);
+
+        // Construct an owned VerifiedAddrs instance via test-only helper
+        let mut v = verified_addresses::new_for_test(admin, &mut ctx);
+
+        // Add an address (here we just add the admin address for simplicity)
+        let who = admin;
+        verified_addresses::add_address(&mut v, who, &mut ctx);
+
+        // Check membership and size
+        assert!(verified_addresses::is_verified(&v, who), 100);
+        assert!(verified_addresses::count(&v) == 1, 101);
+
+        // Consume and delete the object to finish cleanly
+        verified_addresses::delete_all(v, &mut ctx);
     }
 }
