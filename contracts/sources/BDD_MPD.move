@@ -6,7 +6,7 @@ module vote_pkg::password_db {
     /// Stocke des hash de mots de passe (vector<u8> par hash)
     /// NOTE: pour la démo nous stockons des hash (SHA256) ; NE PAS stocker
     /// de mots de passe en clair en production.
-    struct PasswordDB has key, store {
+    public struct PasswordDB has key, store {
         id: UID,
         emitter: address,            // entité qui a le droit d'ajouter des hashes
         hashes: vector<vector<u8>>,  // chaque élément est un hash (vector<u8>)
@@ -30,16 +30,35 @@ module vote_pkg::password_db {
         debug::print(&b"Password hash added");
     }
 
-    /// Vérifie si un hash existe
+   /// Vérifie si un hash existe
     public fun password_hash_exists(db: &PasswordDB, h: &vector<u8>): bool {
         let n = vector::length(&db.hashes);
         let mut i = 0;
         while (i < n) {
-            if (vector::borrow(&db.hashes, i) == h) { return true; }
+            let cur = vector::borrow(&db.hashes, i); // &vector<u8>
+            if (eq_bytes(cur, h)) {
+                return true
+            };
             i = i + 1;
-        }
+        };
         false
     }
+
+    /// Égalité structurelle de deux `vector<u8>`
+    fun eq_bytes(a: &vector<u8>, b: &vector<u8>): bool {
+        let la = vector::length(a);
+        let lb = vector::length(b);
+        if (la != lb) return false;
+
+        let mut i = 0;
+        while (i < la) {
+            if (*vector::borrow(a, i) != *vector::borrow(b, i)) {
+                return false
+            };
+            i = i + 1;
+        };
+        true
+    }    
 
     /// Supprime toute la DB (consomme l'objet) - seul emitter peut appeler
     public entry fun delete_all(db: PasswordDB, ctx: &mut TxContext) {
