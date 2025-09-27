@@ -9,7 +9,7 @@ module vote_pkg::password_db {
     /// Stocke des hash de mots de passe (vector<u8> par hash)
     /// NOTE: pour la démo nous stockons des hash (SHA256) ; NE PAS stocker
     /// de mots de passe en clair en production.
-    struct PasswordDB has key {
+    struct PasswordDB has key, store {
         id: UID,
         emitter: address,            // entité qui a le droit d'ajouter des hashes
         hashes: vector<vector<u8>>,  // chaque élément est un hash (vector<u8>)
