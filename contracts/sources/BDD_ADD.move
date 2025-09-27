@@ -1,9 +1,6 @@
 // sources/verified_addresses.move
 module vote_pkg::verified_addresses {
     use sui::object::{Self, UID};
-    use sui::tx_context::{Self, TxContext};
-    use sui::transfer;
-    use std::vector;
     use std::debug;
 
     /// Objet qui garde la liste des adresses "vérifiées" et un administrateur

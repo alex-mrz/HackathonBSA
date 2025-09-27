@@ -1,9 +1,6 @@
 // sources/password_db.move
 module vote_pkg::password_db {
     use sui::object::{Self, UID};
-    use sui::tx_context::{Self, TxContext};
-    use sui::transfer;
-    use std::vector;
     use std::debug;
 
     /// Stocke des hash de mots de passe (vector<u8> par hash)

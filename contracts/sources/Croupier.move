@@ -1,8 +1,6 @@
 // sources/croupier.move
 module vote_pkg::croupier {
     use sui::object::{Self, UID};
-    use sui::tx_context::{Self, TxContext};
-    use std::vector;
     use std::debug;
 
     use vote_pkg::verified_addresses;

@@ -1,8 +1,5 @@
 // sources/auth.move
 module vote_pkg::auth {
-    use sui::tx_context::{Self, TxContext};
-    use sui::transfer;
-    use std::vector;
     use std::debug;
 
     // Importer nos modules de DB

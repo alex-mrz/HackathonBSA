@@ -1,8 +1,6 @@
 // sources/vote_receiver.move
 module vote_pkg::vote_receiver {
     use sui::object::{Self, UID};
-    use sui::tx_context::{Self, TxContext};
-    use std::vector;
     use std::debug;
 
     /// Objet qui stocke le tally (comptage) pour la démo

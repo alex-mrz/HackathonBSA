@@ -1,8 +1,6 @@
 // sources/scrutateur.move
 module vote_pkg::scrutateur {
     use sui::object::{Self, UID};
-    use sui::tx_context::{Self, TxContext};
-    use std::vector;
     use std::debug;
 
     /// L'objet du scrutateur reçoit les blobs (encodés pour le scrutateur par le croupier)
