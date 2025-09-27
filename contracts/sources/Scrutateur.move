@@ -42,7 +42,7 @@ module vote_pkg::scrutateur {
     /// remove / delete scrutateur store (admin only)
     public entry fun delete_all(s: ScrutateurStore, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 3);
-        let ScrutateurStore { id, blobs: _, processed: _ } = s;
+        let ScrutateurStore { id, admin: _, blobs: _, processed: _ } = s;
         object::delete(id);
     }
 }
