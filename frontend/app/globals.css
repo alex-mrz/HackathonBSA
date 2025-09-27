@@ -56,3 +56,20 @@
     color: hsl(var(--foreground));
   }
 }
+/*ajout code de base 
+/* === Helpers DA VoteSecure === */
+.glass {
+  @apply bg-white/70 backdrop-blur border border-slate-200/80 shadow-sm;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-600 text-white font-medium shadow hover:bg-blue-700 transition;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-emerald-600 text-white font-medium shadow hover:bg-emerald-700 transition;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-md border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 transition;
+}
