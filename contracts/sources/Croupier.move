@@ -52,21 +52,21 @@ module vote_pkg::croupier {
     }
 
     /// TESTER LES FONCTION SWAP ET SHUFFLE
-    fun swap<T>(v: &mut vector<T>, i: u64, j: u64) {
-        let tmp = vector::borrow_mut(v, i);
-        let tmp2 = vector::borrow_mut(v, j);
-        let t = *tmp;
-        *tmp = *tmp2;
-        *tmp2 = t;
-    }
+    // fun swap<T>(v: &mut vector<T>, i: u64, j: u64) {
+    //     let tmp = vector::borrow_mut(v, i);
+    //     let tmp2 = vector::borrow_mut(v, j);
+    //     let t = *tmp;
+    //     *tmp = *tmp2;
+    //     *tmp2 = t;
+    // }
 
     fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
         let n = vector::length(&store.tokens);
         let mut i = 0;
         while (i < n) {
-            let j = indices[i]; // indices must be provided externally, a quick python script random and connected
-            swap(&mut store.tokens, i, j);
-            swap(&mut store.submitters, i, j);
+            let j = indices[i];
+            vector::swap(&mut store.tokens, i, j);
+            vector::swap(&mut store.submitters, i, j);
             i = i + 1;
         }
     }
