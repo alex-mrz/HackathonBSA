@@ -1,8 +1,11 @@
 // sources/croupier.move
 module vote_pkg::croupier {
     use std::debug;
-    use sui::object::{Self, UID};
     use std::string;
+    use std::vector;
+    use sui::object::{Self as object, UID};
+    use sui::tx_context::{Self as tx_context, TxContext};
+    use sui::transfer;
 
     use vote_pkg::verified_addresses;
 
@@ -16,7 +19,7 @@ module vote_pkg::croupier {
     }
 
     /// Crée la structure Croupier et l'assigne à l'admin
-    public fun create_store(ctx: &mut TxContext) {
+    public entry fun create_store(ctx: &mut TxContext) {
         let s = CroupierStore {
             id: object::new(ctx),
             admin: tx_context::sender(ctx),
@@ -81,6 +84,12 @@ fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
         i = i + 1;
     };
 }
+
+    /// Permet au détenteur admin de mélanger les tokens selon une permutation donnée.
+    public entry fun shuffle_tokens(store: &mut CroupierStore, indices: vector<u64>, ctx: &mut TxContext) {
+        assert!(tx_context::sender(ctx) == store.admin, 5);
+        shuffle_store(store, indices);
+    }
 
     /// Pour la démo, on envoie les blobs tels quels au scrutateur via un appel on-chain.
     public entry fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
