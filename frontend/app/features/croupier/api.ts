@@ -8,7 +8,10 @@ const arg = {
   vectorU8: (tx: Transaction, bytes: Uint8Array | number[]) =>
     tx.pure.vector("u8", Array.from(bytes)),
   vectorU64: (tx: Transaction, values: number[]) =>
-    tx.pure.vector("u64", values.map((v) => BigInt(v))),
+    tx.pure.vector(
+      "u64",
+      values.map((v) => BigInt(v)),
+    ),
 };
 
 export const CROUPIER_TYPE = (pkg: string) => `${mod(pkg)}::CroupierStore`;
