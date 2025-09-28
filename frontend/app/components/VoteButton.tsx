@@ -35,7 +35,7 @@ export function VoteButton({ voteValue, label, variant }: VoteButtonProps) {
 
   const account = useCurrentAccount();
   const client = useSuiClient();
-  const { submitToken, shuffleTokens, forwardAll } = useCroupier();
+  const { submitToken, shuffleTokens, forwardAll } = useCroupier(); // shuffle token entre submit et forward
   const { ensureStoreId: ensureScrutateurStoreId, receiveBlob, markProcessed } =
     useScrutateur();
 
