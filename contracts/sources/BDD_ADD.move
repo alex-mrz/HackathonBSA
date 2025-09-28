@@ -26,7 +26,7 @@ module vote_pkg::verified_addresses {
             admin: tx_context::sender(ctx),
             addrs: vector::empty<address>(),
         };
-        transfer::public_transfer(obj, tx_context::sender(ctx));
+        transfer::share_object(obj);
         debug::print(&string::utf8(b"VerifiedAddrs created"));
 
     }
