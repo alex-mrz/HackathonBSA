@@ -5,12 +5,15 @@ We first hash the identifier concatenated with a random suffix, then we prepend
 the two-digit vote value. This hides the identifier while keeping a
 deterministic check value for off-chain workflows.
 """
-from dataclasses import dataclass
-from secrets import token_hex
+from __future__ import annotations
+
+import argparse
 import hashlib
 import json
 import random
+from dataclasses import dataclass
 from pathlib import Path
+from secrets import token_hex
 
 
 @dataclass(frozen=True)
@@ -50,7 +53,7 @@ def create_vote_token(
     return token, payload_hash, random_suffix
 
 
-def main() -> None:
+def _demo() -> None:
     output_records: list[dict[str, str | int]] = []
 
     persons = {
@@ -118,6 +121,62 @@ def main() -> None:
         json.dump({"tokens": output_records}, fh, ensure_ascii=False, indent=2)
     print(f"\nTokens enregistrés dans {output_path.resolve()}")
 
+def _run_cli() -> None:
+    parser = argparse.ArgumentParser(description="Vote token generator")
+    parser.add_argument("--identifier", help="Identifiant de la personne (digits only)")
+    parser.add_argument("--name", help="Nom complet optionnel de la personne")
+    parser.add_argument("--vote", type=int, help="Valeur du vote entre 0 et 99")
+    parser.add_argument(
+        "--random-bytes",
+        type=int,
+        default=6,
+        help="Nombre d'octets aléatoires utilisés pour le nonce (défaut: 6)",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Retourne le résultat en JSON sur stdout",
+    )
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="Lance le scénario de démonstration intégré",
+    )
+
+    args = parser.parse_args()
+
+    # Mode démo explicite ou absence de paramètres obligatoires -> démo.
+    if args.demo or not (args.identifier and args.vote is not None):
+        _demo()
+        return
+
+    person = Person(identifier=args.identifier, name=args.name or "")
+    token, payload_hash, nonce = create_vote_token(
+        args.vote,
+        person,
+        random_bytes=args.random_bytes,
+    )
+
+    output = {
+        "person_id": person.identifier,
+        "person_name": person.name,
+        "vote": args.vote,
+        "token": token,
+        "payload_hash": payload_hash,
+        "nonce": nonce,
+    }
+
+    if args.json:
+        print(json.dumps(output, ensure_ascii=False))
+    else:
+        print(
+            f"Token généré pour {person.identifier}:\n"
+            f"  vote={args.vote:02d}\n"
+            f"  token={token}\n"
+            f"  payload_hash={payload_hash}\n"
+            f"  nonce={nonce}"
+        )
+
 
 if __name__ == "__main__":
-    main()
+    _run_cli()

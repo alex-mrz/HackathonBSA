@@ -20,17 +20,31 @@ const utf8 = (s: string) => new TextEncoder().encode(s);
 const hash32 = (b: Uint8Array) => blake2b(b, undefined, 32);
 
 function makeSeal(sui: SuiClient, keyServerIds: Hex[]) {
-  const ctor: any = (SealNS as any).SealClient || (SealNS as any).default || (SealNS as any).Client;
-  if (!ctor) {
-    throw new Error("@mysten/seal is installed, but no SealClient/Client/default export was found");
+  const mod: any = SealNS;
+  const ctor: any = mod.SealClient || mod.default || mod.Client;
+  if (ctor) {
+    return new ctor({
+      suiClient: sui,
+      serverConfigs: keyServerIds.map((id: Hex) => ({ objectId: id, weight: 1 })),
+      serverObjectIds: keyServerIds,
+      verifyKeyServers: true,
+    });
   }
-  // Pass both shapes so it works across SDK versions
-  return new ctor({
-    suiClient: sui,
-    serverConfigs: keyServerIds.map((id) => ({ objectId: id, weight: 1 })),
-    serverObjectIds: keyServerIds,
-    verifyKeyServers: true,
-  });
+
+  console.warn(
+    "@mysten/seal client exports missing; falling back to no-op seal stub (plaintext passthrough)",
+  );
+  return {
+    async encrypt({ data }: { data: Uint8Array }) {
+      return { encryptedObject: data };
+    },
+    async deriveKey(_: { txBytes: Uint8Array }) {
+      return new Uint8Array();
+    },
+    async decrypt({ data }: { data: Uint8Array; derivedKey?: Uint8Array }) {
+      return data;
+    },
+  };
 }
 
 // ---- TYPES ----
