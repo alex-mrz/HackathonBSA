@@ -9,6 +9,9 @@ module vote_pkg::croupier {
 
     use vote_pkg::verified_addresses;
 
+    const E_NOT_VERIFIED: u64 = 1;
+    const E_ALREADY_SUBMITTED: u64 = 2;
+
     /// Stocke blobs chiffrés (soumissions) et la liste des submitters.
     public struct CroupierStore has key, store {
         id: UID,
@@ -38,14 +41,14 @@ module vote_pkg::croupier {
         // vérifie que sender est dans la liste verified
         let sender = tx_context::sender(ctx);
         let ok = verified_addresses::is_verified(v_ref, sender);
-        assert!(ok, 1);
+        assert!(ok, E_NOT_VERIFIED);
 
         // vérifie que sender n'a pas déjà soumis
         let n = vector::length(&s.submitters);
         let mut i = 0;
         while (i < n) {
             if (*vector::borrow(&s.submitters, i) == sender) {
-                assert!(false, 2);
+                assert!(false, E_ALREADY_SUBMITTED);
             };
             i = i + 1;
         };
