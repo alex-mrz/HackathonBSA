@@ -11,6 +11,7 @@ import {
   buildSubmitTokenTx,
   buildForwardAllTx,
   buildDeleteAllCroupierTx,
+  buildShuffleTx,
 } from "./api";
 
 export function useCroupier() {
@@ -74,5 +75,16 @@ export function useCroupier() {
     return { digest: res.digest, storeId };
   }, [ensureStoreId, client, pkg, signAndExecute]);
 
-  return { ensureStoreId, submitToken, forwardAll, deleteAll };
+  const shuffleTokens = useCallback(
+    async (permutation: number[]) => {
+      const storeId = await ensureStoreId();
+      const tx = buildShuffleTx(pkg, storeId, permutation);
+      const res = await signAndExecute({ transaction: tx });
+      await client.waitForTransaction({ digest: res.digest });
+      return { digest: res.digest, storeId };
+    },
+    [ensureStoreId, client, pkg, signAndExecute],
+  );
+
+  return { ensureStoreId, submitToken, forwardAll, deleteAll, shuffleTokens };
 }

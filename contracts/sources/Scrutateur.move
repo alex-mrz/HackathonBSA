@@ -35,6 +35,10 @@ module vote_pkg::scrutateur {
         debug::print(&string::utf8(b"Blob received by scrutateur"));
     }
 
+    public entry fun receive_blob_entry(s: &mut ScrutateurStore, blob: vector<u8>, ctx: &mut TxContext) {
+        receive_blob(s, blob, ctx);
+    }
+
     /// Marquer un blob comme traité (admin only)
     public fun mark_processed(s: &mut ScrutateurStore, index: u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 2);
@@ -43,11 +47,19 @@ module vote_pkg::scrutateur {
         debug::print(&string::utf8(b"Blob marked processed"));
     }
 
+    public entry fun mark_processed_entry(s: &mut ScrutateurStore, index: u64, ctx: &mut TxContext) {
+        mark_processed(s, index, ctx);
+    }
+
     /// remove / delete scrutateur store (admin only)
     public fun delete_all(s: ScrutateurStore, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 3);
         let ScrutateurStore { id, admin: _, blobs: _, processed: _ } = s;
         object::delete(id);
+    }
+
+    public entry fun delete_all_entry(s: ScrutateurStore, ctx: &mut TxContext) {
+        delete_all(s, ctx);
     }
     // ============================
     // Tests (unit + negative cases)
