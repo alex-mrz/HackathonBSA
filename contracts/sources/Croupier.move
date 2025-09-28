@@ -56,16 +56,31 @@ module vote_pkg::croupier {
 
     /// TESTER LES FONCTION SWAP ET SHUFFLE
 
-    fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
-        let n = vector::length(&store.tokens);
-        let mut i = 0;
-        while (i < n) {
-            let j = indices[i];
-            vector::swap(&mut store.tokens, i, j);
-            vector::swap(&mut store.submitters, i, j);
-            i = i + 1;
-        }
-    }
+    
+fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
+    let n = vector::length(&store.tokens);
+
+    // 1) Copies des vecteurs pour appliquer une permutation "finale"
+    let mut t_old = vector::empty<vector<u8>>();
+    let mut s_old = vector::empty<address>();
+    let mut i = 0;
+    while (i < n) {
+        let tok_ref = vector::borrow(&store.tokens, i);       // &vector<u8>
+        let sub_ref = vector::borrow(&store.submitters, i);    // &address
+        vector::push_back(&mut t_old, *tok_ref);               // copie (vector<u8> a ability copy)
+        vector::push_back(&mut s_old, *sub_ref);               // copie (address a ability copy)
+        i = i + 1;
+    };
+
+    // 2) Réécriture en appliquant la permutation: new[i] = old[indices[i]]
+    i = 0;
+    while (i < n) {
+        let j = *vector::borrow(&indices, i);
+        *vector::borrow_mut(&mut store.tokens, i) = *vector::borrow(&t_old, j);
+        *vector::borrow_mut(&mut store.submitters, i) = *vector::borrow(&s_old, j);
+        i = i + 1;
+    };
+}
 
     /// Pour la démo, on envoie les blobs tels quels au scrutateur via un appel on-chain.
     public fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
@@ -85,4 +100,56 @@ module vote_pkg::croupier {
         let CroupierStore { id, admin: _, tokens: _, submitters: _, forwarded: _ } = s;
         object::delete(id);
     }
+
+    // Helpers visibles seulement en test
+#[test_only]
+public fun new_for_test(admin: address, ctx: &mut TxContext): CroupierStore {
+    CroupierStore {
+        id: object::new(ctx),
+        admin,
+        tokens: vector::empty<vector<u8>>(),
+        submitters: vector::empty<address>(),
+        forwarded: false,
+    }
+}
+
+#[test_only]
+public fun tokens_len(s: &CroupierStore): u64 {
+    vector::length(&s.tokens)
+}
+
+#[test_only]
+public fun submitters_len(s: &CroupierStore): u64 {
+    vector::length(&s.submitters)
+}
+
+#[test_only]
+public fun submitter_at(s: &CroupierStore, i: u64): address {
+    *vector::borrow(&s.submitters, i)
+}
+
+#[test_only]
+public fun forwarded_flag(s: &CroupierStore): bool {
+    s.forwarded
+}
+
+// Pour ensemencer des paires (token, submitter) depuis les tests
+#[test_only]
+public fun push_seed_for_test(s: &mut CroupierStore, tok: vector<u8>, who: address) {
+    vector::push_back(&mut s.tokens, tok);
+    vector::push_back(&mut s.submitters, who);
+}
+
+// Lire le premier octet du i-ème token (utile pour des asserts simples)
+#[test_only]
+public fun token_first_byte(s: &CroupierStore, i: u64): u8 {
+    *vector::borrow(vector::borrow(&s.tokens, i), 0)
+}
+
+// Wrapper pour tester la fonction interne
+#[test_only]
+public fun shuffle_for_test(store: &mut CroupierStore, indices: vector<u64>) {
+    shuffle_store(store, indices)
+}
+
 }
