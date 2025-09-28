@@ -1,4 +1,5 @@
 // frontend/app/securite/page.tsx
+import { ConnectButton } from "@mysten/dapp-kit";
 import Link from "next/link";
 
 export default function SecuritePage() {
@@ -9,6 +10,7 @@ export default function SecuritePage() {
         <h1 className="text-4xl font-extrabold text-slate-900 mb-6 text-center">
           Vote en Toute Sécurité
         </h1>
+        <ConnectButton>oeoeos</ConnectButton>
         <p className="text-lg text-slate-600 text-center max-w-2xl mx-auto mb-12">
           Notre plateforme de vote numérique garantit un haut niveau de
           sécurité grâce à la blockchain. Chaque voix est protégée par un

@@ -16,6 +16,7 @@ import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
+    <Providers>
     <html lang="fr">
       <body className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-900">
         {/* Top bar */}
@@ -84,5 +85,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </footer>
       </body>
     </html>
+    </Providers>
   );
 }

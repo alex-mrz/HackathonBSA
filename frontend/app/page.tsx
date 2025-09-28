@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import App from "./App";
 import Link from "next/link";
+import { ConnectButton } from "@mysten/dapp-kit";
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
@@ -144,6 +145,7 @@ export default function Home() {
             <Badge>🔒 Cryptage AES-256</Badge>
             <Badge>🔍 Transparence Totale</Badge>
             <Badge>✅ Certifié ISO 27001</Badge>
+            <ConnectButton>oeoeoe</ConnectButton>
           </div>
 
           <h1 className="mt-6 text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Votez en toute sécurité</h1>
