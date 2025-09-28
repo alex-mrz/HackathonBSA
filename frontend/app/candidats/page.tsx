@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VoteButton } from "../components/VoteButton";
 
 export default function CandidatsPage() {
   return (
@@ -35,10 +36,11 @@ export default function CandidatsPage() {
               <li>Favorise les partenariats publics‑privés et les startups.</li>
               <li>Réduit la dépendance technologique vis‑à‑vis de l’étranger.</li>
             </ul>
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <VoteButton voteValue={1} label="Voter pour" variant="pour" />
               <Link
                 href="/candidats/recherche/oui"
-                className="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                className="inline-flex items-center rounded-md bg-emerald-100 px-4 py-2 text-emerald-800 hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-300"
               >
                 Je voudrais en savoir plus
               </Link>
@@ -64,10 +66,11 @@ export default function CandidatsPage() {
               <li>Mieux cibler le transfert vers l’industrie et la société.</li>
               <li>Renforcer l’évaluation indépendante avant d’augmenter.</li>
             </ul>
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <VoteButton voteValue={0} label="Voter contre" variant="contre" />
               <Link
                 href="/candidats/recherche/non"
-                className="inline-flex items-center rounded-md bg-rose-600 px-4 py-2 text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                className="inline-flex items-center rounded-md bg-rose-100 px-4 py-2 text-rose-800 hover:bg-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-300"
               >
                 Je voudrais en savoir plus
               </Link>
