@@ -22,13 +22,13 @@ module vote_pkg::scrutateur {
             blobs: vector::empty<vector<u8>>(),
             processed: vector::empty<bool>(),
         };
-        transfer::public_transfer(s, tx_context::sender(ctx));
+        transfer::share_object(s);
         debug::print(&string::utf8(b"ScrutateurStore created"));
     }
 
     /// Reçoit un token (appelé par le worker/off-chain après déchiffrement par le croupier)
     /// Pour la démo on autorise que l'admin (worker) ajoute les blobs
-    public fun receive_blob(s: &mut ScrutateurStore, blob: vector<u8>, ctx: &mut TxContext) {
+    public entry fun receive_blob(s: &mut ScrutateurStore, blob: vector<u8>, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 1);
         vector::push_back(&mut s.blobs, blob);
         vector::push_back(&mut s.processed, false);
@@ -36,7 +36,7 @@ module vote_pkg::scrutateur {
     }
 
     /// Marquer un blob comme traité (admin only)
-    public fun mark_processed(s: &mut ScrutateurStore, index: u64, ctx: &mut TxContext) {
+    public entry fun mark_processed(s: &mut ScrutateurStore, index: u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 2);
         let mut flag_ref = vector::borrow_mut(&mut s.processed, index);
         *flag_ref = true;
@@ -44,7 +44,7 @@ module vote_pkg::scrutateur {
     }
 
     /// remove / delete scrutateur store (admin only)
-    public fun delete_all(s: ScrutateurStore, ctx: &mut TxContext) {
+    public entry fun delete_all(s: ScrutateurStore, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 3);
         let ScrutateurStore { id, admin: _, blobs: _, processed: _ } = s;
         object::delete(id);
