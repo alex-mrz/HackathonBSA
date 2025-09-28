@@ -14,7 +14,7 @@ module vote_pkg::password_db {
     }
 
     /// Crée la DB et la transfère à l'émetteur (caller)
-    public fun create_db(ctx: &mut TxContext) {
+    public entry fun create_db(ctx: &mut TxContext) {
         let db = PasswordDB {
             id: object::new(ctx),
             emitter: tx_context::sender(ctx),
@@ -26,7 +26,7 @@ module vote_pkg::password_db {
     }
 
     /// Ajoute un hash (seul emitter peut ajouter)
-    public fun add_password_hash(db: &mut PasswordDB, h: vector<u8>, ctx: &mut TxContext) {
+    public entry fun add_password_hash(db: &mut PasswordDB, h: vector<u8>, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == db.emitter, 1);
         vector::push_back(&mut db.hashes, h);
         debug::print(&string::utf8(b"Password hash added"));

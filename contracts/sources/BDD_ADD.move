@@ -32,7 +32,7 @@ module vote_pkg::verified_addresses {
     }
 
     /// Ajoute une adresse - seul l'admin peut appeler
-    public fun add_address(v: &mut VerifiedAddrs, a: address, ctx: &mut TxContext) {
+    public entry fun add_address(v: &mut VerifiedAddrs, a: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == v.admin, 1);
         vector::push_back(&mut v.addrs, a);
         debug::print(&string::utf8(b"Address added"));
@@ -56,7 +56,7 @@ module vote_pkg::verified_addresses {
     }
 
     /// Supprime tout (consomme l'objet) - seul admin peut appeler
-    public fun delete_all(v: VerifiedAddrs, ctx: &mut TxContext) {
+    public entry fun delete_all(v: VerifiedAddrs, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == v.admin, 3);
         let VerifiedAddrs { id, addrs: _, admin: _ } = v;
         object::delete(id);

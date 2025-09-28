@@ -17,7 +17,7 @@ module vote_pkg::auth {
     /// configuré comme "emitter" dans password_db et devra de même être admin
     /// de VerifiedAddrs pour pouvoir appeler add_address. Dans une version
     /// plus avancée, on utiliserait des signatures multi-parties ou un rôle.
-    public fun authenticate_and_register(
+    public entry fun authenticate_and_register(
         pw_db: &mut password_db::PasswordDB,
         verified: &mut VerifiedAddrs,
         addr: address,

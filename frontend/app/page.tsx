@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import App from "./App";
 import Link from "next/link";
 import { ConnectButton } from "@mysten/dapp-kit";
+import AuthDemo from "./components/AuthDemo";
+import CroupierPanel from "./components/CroupierPanel";
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
@@ -13,21 +15,41 @@ function Badge({ children }: { children: React.ReactNode }) {
   );
 }
 
-function StatCard({ icon, title, value }: { icon: string; title: string; value: string }) {
+function StatCard({
+  icon,
+  title,
+  value,
+}: {
+  icon: string;
+  title: string;
+  value: string;
+}) {
   return (
     <div className="glass p-6 rounded-2xl">
-      <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow">{icon}</div>
+      <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow">
+        {icon}
+      </div>
       <div className="mt-4 text-2xl font-semibold">{value}</div>
       <div className="text-slate-500 text-sm">{title}</div>
     </div>
   );
 }
 
-function Feature({ emoji, title, points }: { emoji: string; title: string; points: string[] }) {
+function Feature({
+  emoji,
+  title,
+  points,
+}: {
+  emoji: string;
+  title: string;
+  points: string[];
+}) {
   return (
     <div className="glass p-6 rounded-2xl">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow text-lg">{emoji}</div>
+        <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow text-lg">
+          {emoji}
+        </div>
         <h3 className="font-semibold text-lg">{title}</h3>
       </div>
       <ul className="mt-4 space-y-2 text-sm text-slate-600">
@@ -38,7 +60,10 @@ function Feature({ emoji, title, points }: { emoji: string; title: string; point
           </li>
         ))}
       </ul>
-      <Link href="/candidats" className="mt-4 inline-flex items-center gap-2 text-blue-700 hover:underline text-sm">
+      <Link
+        href="/candidats"
+        className="mt-4 inline-flex items-center gap-2 text-blue-700 hover:underline text-sm"
+      >
         En savoir plus <span>→</span>
       </Link>
     </div>
@@ -54,8 +79,19 @@ function Feature({ emoji, title, points }: { emoji: string; title: string; point
 export default function Home() {
   const [showVotesOnly, setShowVotesOnly] = useState(false);
 
+  <main className="p-6">
+    <h1>Accueil</h1>
+    <ul className="list-disc pl-6">
+      <li>
+        <Link href="/croupier">Aller au Croupier</Link>
+      </li>
+    </ul>
+  </main>;
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash === "#resultats") {
+    if (
+      typeof window !== "undefined" &&
+      window.location.hash === "#resultats"
+    ) {
       setShowVotesOnly(true);
     }
   }, []);
@@ -94,7 +130,8 @@ export default function Home() {
       id: "v3",
       tag: "Recherche",
       title: "Augmentation du budget Recherche",
-      summary: "Augmenter les financements pour les universités et laboratoires.",
+      summary:
+        "Augmenter les financements pour les universités et laboratoires.",
       pct: 44.0,
     },
   ];
@@ -104,15 +141,21 @@ export default function Home() {
       <div className="mx-auto max-w-5xl px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Votes en cours</h1>
-          <button onClick={closeVotes} className="btn-outline">← Retour</button>
+          <button onClick={closeVotes} className="btn-outline">
+            ← Retour
+          </button>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           {votesDemo.map((v) => (
             <article key={v.id} className="glass rounded-2xl p-6">
               <div className="flex items-center justify-between">
-                <div className="text-xs inline-flex px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">{v.tag}</div>
-                <div className="text-sm text-slate-500">{Math.round(Math.random() * 5000)} votes</div>
+                <div className="text-xs inline-flex px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                  {v.tag}
+                </div>
+                <div className="text-sm text-slate-500">
+                  {Math.round(Math.random() * 5000)} votes
+                </div>
               </div>
 
               <h2 className="font-semibold text-xl mt-4">{v.title}</h2>
@@ -120,14 +163,29 @@ export default function Home() {
 
               <div className="mt-4">
                 <div className="h-2 bg-slate-200 rounded-full">
-                  <div className="h-2 bg-emerald-500 rounded-full" style={{ width: `${v.pct}%` }} />
+                  <div
+                    className="h-2 bg-emerald-500 rounded-full"
+                    style={{ width: `${v.pct}%` }}
+                  />
                 </div>
-                <div className="mt-2 text-xs text-slate-500">{v.pct}% du total</div>
+                <div className="mt-2 text-xs text-slate-500">
+                  {v.pct}% du total
+                </div>
               </div>
 
               <div className="mt-4 flex gap-3">
-                <Link href={`/votes/${v.id}`} className="btn-primary inline-block">Voter pour ce projet</Link>
-                <Link href={`/votes/${v.id}/details`} className="btn-outline inline-block">En savoir plus</Link>
+                <Link
+                  href={`/votes/${v.id}`}
+                  className="btn-primary inline-block"
+                >
+                  Voter pour ce projet
+                </Link>
+                <Link
+                  href={`/votes/${v.id}/details`}
+                  className="btn-outline inline-block"
+                >
+                  En savoir plus
+                </Link>
               </div>
             </article>
           ))}
@@ -147,18 +205,33 @@ export default function Home() {
             <Badge>✅ Certifié ISO 27001</Badge>
             <ConnectButton>oeoeoe</ConnectButton>
           </div>
-
-          <h1 className="mt-6 text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Votez en toute sécurité</h1>
+          <h1 className="mt-6 text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+            Votez en toute sécurité
+          </h1>
+          <br />
+          <br /> Auth Demo <br />
+          <AuthDemo />;
+          <br />
+          <br />
+          Croupier Panel <br />
+          <CroupierPanel />
+          <br /> <br />
           <p className="mt-4 text-lg text-slate-600">
-            Participez à la démocratie numérique avec notre plateforme de vote sécurisée. Chaque vote compte et est protégé par un chiffrement de niveau militaire.
+            Participez à la démocratie numérique avec notre plateforme de vote
+            sécurisée. Chaque vote compte et est protégé par un chiffrement de
+            niveau militaire.
           </p>
-
           <div className="mt-8 flex flex-wrap gap-3">
-            <button onClick={openVotes} className="btn-primary">⚡ Commencer à voter</button>
-            <Link href="/securite" className="btn-outline">◦ En savoir plus</Link>
+            <button onClick={openVotes} className="btn-primary">
+              ⚡ Commencer à voter
+            </button>
+            <Link href="/securite" className="btn-outline">
+              ◦ En savoir plus
+            </Link>
           </div>
-
-          <div className="mt-6 text-sm text-slate-500">⭐️⭐️⭐️⭐️⭐️ — Noté 4,9/5 par 5+ utilisateurs</div>
+          <div className="mt-6 text-sm text-slate-500">
+            ⭐️⭐️⭐️⭐️⭐️ — Noté 4,9/5 par 5+ utilisateurs
+          </div>
         </div>
 
         <div className="relative">
@@ -170,8 +243,12 @@ export default function Home() {
             />
           </div>
 
-          <div className="absolute -top-4 -right-4 bg-white rounded-full px-3 py-1 text-sm shadow">🟢 Vote en cours</div>
-          <div className="absolute -bottom-4 left-4 glass px-3 py-1 rounded-full text-sm">🔐 100% sécurisé</div>
+          <div className="absolute -top-4 -right-4 bg-white rounded-full px-3 py-1 text-sm shadow">
+            🟢 Vote en cours
+          </div>
+          <div className="absolute -bottom-4 left-4 glass px-3 py-1 rounded-full text-sm">
+            🔐 100% sécurisé
+          </div>
         </div>
       </section>
 
@@ -185,18 +262,48 @@ export default function Home() {
 
       {/* FEATURES */}
       <section id="features" className="py-16 grid md:grid-cols-3 gap-6">
-        <Feature emoji="📱" title="Vote Mobile" points={["Interface intuitive", "Compatible iOS/Android", "Mode hors-ligne"]} />
-        <Feature emoji="📊" title="Résultats en Temps Réel" points={["Graphiques animés", "Données vérifiées", "Export possible"]} />
-        <Feature emoji="🧩" title="Vote Collectif" points={["Groupes & délégations", "Modération avancée", "Audit trail"]} />
+        <Feature
+          emoji="📱"
+          title="Vote Mobile"
+          points={[
+            "Interface intuitive",
+            "Compatible iOS/Android",
+            "Mode hors-ligne",
+          ]}
+        />
+        <Feature
+          emoji="📊"
+          title="Résultats en Temps Réel"
+          points={["Graphiques animés", "Données vérifiées", "Export possible"]}
+        />
+        <Feature
+          emoji="🧩"
+          title="Vote Collectif"
+          points={[
+            "Groupes & délégations",
+            "Modération avancée",
+            "Audit trail",
+          ]}
+        />
       </section>
 
       {/* SÉCURITÉ */}
       <section id="securite" className="py-16">
-        <h2 className="text-center text-2xl font-semibold">Sécurité maximale</h2>
-        <p className="mt-2 text-center text-slate-600">Nous appliquons les meilleurs standards pour protéger l’intégrité de chaque vote.</p>
+        <h2 className="text-center text-2xl font-semibold">
+          Sécurité maximale
+        </h2>
+        <p className="mt-2 text-center text-slate-600">
+          Nous appliquons les meilleurs standards pour protéger l’intégrité de
+          chaque vote.
+        </p>
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {["ISO 27001", "RGPD", "SOC 2", "SSL/TLS"].map((label) => (
-            <div key={label} className="glass rounded-xl px-4 py-3 text-center text-sm">✅ {label}</div>
+            <div
+              key={label}
+              className="glass rounded-xl px-4 py-3 text-center text-sm"
+            >
+              ✅ {label}
+            </div>
           ))}
         </div>
       </section>
@@ -206,29 +313,49 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-4">Votes en cours</h2>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="glass rounded-2xl p-6">
-            <div className="text-xs inline-flex px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 mb-3">Environnement</div>
-            <h3 className="font-semibold text-lg">Projet Écologique Municipal</h3>
-            <p className="mt-2 text-sm text-slate-600">Installation de panneaux solaires sur les bâtiments publics.</p>
+            <div className="text-xs inline-flex px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 mb-3">
+              Environnement
+            </div>
+            <h3 className="font-semibold text-lg">
+              Projet Écologique Municipal
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Installation de panneaux solaires sur les bâtiments publics.
+            </p>
             <div className="mt-4">
               <div className="h-2 bg-slate-200 rounded-full">
-                <div className="h-2 bg-emerald-500 rounded-full" style={{ width: "32%" }} />
+                <div
+                  className="h-2 bg-emerald-500 rounded-full"
+                  style={{ width: "32%" }}
+                />
               </div>
               <div className="mt-2 text-xs text-slate-500">31.6% du total</div>
             </div>
-            <Link href="/candidats" className="mt-4 inline-block btn-secondary">Voter pour ce projet</Link>
+            <Link href="/candidats" className="mt-4 inline-block btn-secondary">
+              Voter pour ce projet
+            </Link>
           </div>
 
           <div className="glass rounded-2xl p-6">
-            <div className="text-xs inline-flex px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 mb-3">Transport</div>
+            <div className="text-xs inline-flex px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 mb-3">
+              Transport
+            </div>
             <h3 className="font-semibold text-lg">Rénovation des Transports</h3>
-            <p className="mt-2 text-sm text-slate-600">Modernisation du réseau et bus électriques.</p>
+            <p className="mt-2 text-sm text-slate-600">
+              Modernisation du réseau et bus électriques.
+            </p>
             <div className="mt-4">
               <div className="h-2 bg-slate-200 rounded-full">
-                <div className="h-2 bg-indigo-500 rounded-full" style={{ width: "22%" }} />
+                <div
+                  className="h-2 bg-indigo-500 rounded-full"
+                  style={{ width: "22%" }}
+                />
               </div>
               <div className="mt-2 text-xs text-slate-500">22.6% du total</div>
             </div>
-            <Link href="/candidats" className="mt-4 inline-block btn-secondary">Voter pour ce projet</Link>
+            <Link href="/candidats" className="mt-4 inline-block btn-secondary">
+              Voter pour ce projet
+            </Link>
           </div>
         </div>
       </section>

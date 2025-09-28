@@ -7,11 +7,19 @@ import {
 import type { SuiObjectData } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNetworkVariable } from "./networkConfig";
 import { useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
+import VerifiedAdminPanel from "./components/VerifiedAdminPanel";
+import AuthDemo from "./components/AuthDemo";
 
 export function Counter({ id }: { id: string }) {
   const counterPackageId = useNetworkVariable("counterPackageId");
@@ -60,23 +68,30 @@ export function Counter({ id }: { id: string }) {
     );
   };
 
-  if (isPending) return (
-    <Alert>
-      <AlertDescription className="text-muted-foreground">Loading...</AlertDescription>
-    </Alert>
-  );
+  if (isPending)
+    return (
+      <Alert>
+        <AlertDescription className="text-muted-foreground">
+          Loading...
+        </AlertDescription>
+      </Alert>
+    );
 
-  if (error) return (
-    <Alert variant="destructive">
-      <AlertDescription>Error: {error.message}</AlertDescription>
-    </Alert>
-  );
+  if (error)
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>Error: {error.message}</AlertDescription>
+      </Alert>
+    );
 
-  if (!data.data) return (
-    <Alert>
-      <AlertDescription className="text-muted-foreground">Not found</AlertDescription>
-    </Alert>
-  );
+  if (!data.data)
+    return (
+      <Alert>
+        <AlertDescription className="text-muted-foreground">
+          Not found
+        </AlertDescription>
+      </Alert>
+    );
 
   const ownedByCurrentAccount =
     getCounterFields(data.data)?.owner === currentAccount?.address;
@@ -101,13 +116,18 @@ export function Counter({ id }: { id: string }) {
             "Increment"
           )}
         </Button>
+
         {ownedByCurrentAccount ? (
           <Button
             onClick={() => executeMoveCall("reset")}
             disabled={waitingForTxn !== ""}
             className="bg-red-600 hover:bg-red-700 active:bg-red-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg text-white"
           >
-            {waitingForTxn === "reset" ? <ClipLoader size={20} color="white" /> : "Reset"}
+            {waitingForTxn === "reset" ? (
+              <ClipLoader size={20} color="white" />
+            ) : (
+              "Reset"
+            )}
           </Button>
         ) : null}
       </CardContent>

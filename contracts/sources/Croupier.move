@@ -31,7 +31,7 @@ module vote_pkg::croupier {
 
     /// Soumission d'un token chiffré par un citoyen
     /// - v_ref : référence à VerifiedAddrs pour vérifier l'éligibilité
-    public fun submit_token(s: &mut CroupierStore, v_ref: &verified_addresses::VerifiedAddrs, token: vector<u8>, ctx: &mut TxContext) {
+    public entry fun submit_token(s: &mut CroupierStore, v_ref: &verified_addresses::VerifiedAddrs, token: vector<u8>, ctx: &mut TxContext) {
         // vérifie que sender est dans la liste verified
         let sender = tx_context::sender(ctx);
         let ok = verified_addresses::is_verified(v_ref, sender);
@@ -83,7 +83,7 @@ fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
 }
 
     /// Pour la démo, on envoie les blobs tels quels au scrutateur via un appel on-chain.
-    public fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
+    public entry fun forward_all_to_scrutateur(s: &mut CroupierStore, scrutateur_addr: address, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 3);
         let _ = scrutateur_addr; // conserve le paramètre pour usage futur/off-chain
         // marquer forwarded pour éviter double forwarding
@@ -95,7 +95,7 @@ fun shuffle_store(store: &mut CroupierStore, indices: vector<u64>) {
     }
 
     /// Supprime tout (consomme l'objet) - admin only
-    public fun delete_all(s: CroupierStore, ctx: &mut TxContext) {
+    public entry fun delete_all(s: CroupierStore, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == s.admin, 4);
         let CroupierStore { id, admin: _, tokens: _, submitters: _, forwarded: _ } = s;
         object::delete(id);
